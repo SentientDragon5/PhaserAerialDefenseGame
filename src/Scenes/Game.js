@@ -68,10 +68,15 @@ class Game extends Phaser.Scene {
 
 
         // Enemy spawn
-        this.create_enemy("enemy_green",0.5, 0, [
-            20, 20,
-            400, 400,
-            300, 750
+        this.create_enemy("enemy_red",0.5, 5000, [
+            0-20,0,
+            canvas_x/2, canvas_y*0.75,
+            0-20, canvas_y
+        ]);
+        this.create_enemy("enemy_red",0.5, 5000, [
+            canvas_x-20,0,
+            canvas_x/2, canvas_y*0.75,
+            canvas_x-20, canvas_y
         ]);
         
         this.create_enemy("enemy_green",0.5, 0, [
@@ -92,8 +97,13 @@ class Game extends Phaser.Scene {
         ]);
 
         this.create_blue(15,0,3.14/2,0.1, 100, [
-            200, 0,
+            200, -20,
             200, canvas_y
+        ]);
+        
+        this.create_blue(-15,0,3.14/2,0.1, 6000, [
+            canvas_x-200, -20,
+            canvas_x-200, canvas_y
         ]);
         
         this.create_enemy("enemy_red",0.5, 100, [

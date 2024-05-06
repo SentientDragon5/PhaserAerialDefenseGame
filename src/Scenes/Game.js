@@ -27,9 +27,11 @@ class Game extends Phaser.Scene {
         this.cooldown = 0;
 
         this.hearts = [];
-        this.lives = 3;
+        this.lives = 5;
 
         score  =0;
+        isHiScore=false;
+        wave = 0;
         // this.enemy_count_green_text;
         // this.enemy_count_red_text;
         // this.enemy_count_blue_text;
@@ -62,57 +64,9 @@ class Game extends Phaser.Scene {
         my.sprite.player = this.add.sprite(this.px, this.py, "player");
         my.sprite.player.scale = 2;
         
-        this.hearts.push(this.add.sprite(20, 20, "heart"));
-        this.hearts.push(this.add.sprite(40, 20, "heart"));
-        this.hearts.push(this.add.sprite(60, 20, "heart"));
-
-
-        // Enemy spawn
-        this.create_enemy("enemy_red",0.5, 5000, [
-            0-20,0,
-            canvas_x/2, canvas_y*0.75,
-            0-20, canvas_y
-        ]);
-        this.create_enemy("enemy_red",0.5, 5000, [
-            canvas_x-20,0,
-            canvas_x/2, canvas_y*0.75,
-            canvas_x-20, canvas_y
-        ]);
-        
-        this.create_enemy("enemy_green",0.5, 0, [
-            canvas_x, 500,
-            0, 500
-        ]);
-        this.create_enemy("enemy_green",0.5, 50, [
-            canvas_x, 200,
-            0, 200
-        ]);
-        this.create_enemy("enemy_green",0.5, 200, [
-            canvas_x, 100,
-            0, 100
-        ]);
-        this.create_enemy("enemy_green",0.5, 100, [
-            canvas_x, 400,
-            0, 400
-        ]);
-
-        this.create_blue(15,0,3.14/2,0.1, 100, [
-            200, -20,
-            200, canvas_y
-        ]);
-        
-        this.create_blue(-15,0,3.14/2,0.1, 6000, [
-            canvas_x-200, -20,
-            canvas_x-200, canvas_y
-        ]);
-        
-        this.create_enemy("enemy_red",0.5, 100, [
-            canvas_x, 400,
-            canvas_x/2 - 100, canvas_y/2,
-            0, 400
-        ]);
-
-        
+        for(let i=0;i<this.lives;i++){
+            this.hearts.push(this.add.sprite(20+i*20, 20, "heart"));
+        }
 
 
         // UI
@@ -134,9 +88,12 @@ class Game extends Phaser.Scene {
 
         this.score_text = this.add.text(canvas_x - 150, 20, "Score: " + score, this.style);
 
+        this.new_wave = this.add.text(canvas_x-400,20, "Wave " + this.wave, this.style );
         
         var restartKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
         restartKey.on('down', (event) => { this.scene.start('Game'); })
+
+        this.on_new_wave();
     }
 
     dist(x1,y1,x2,y2){
@@ -154,14 +111,24 @@ class Game extends Phaser.Scene {
         if(this.enemy_counts["enemy_green"] <= 0 &&
         this.enemy_counts["enemy_red"] <= 0 &&
         this.enemy_counts["enemy_blue"] <= 0){
-            this.scene.start('Win'); 
+            console.log("new wave " + wave);
+            if(wave>3){
+                if(score>hiScore){
+                    isHiScore = true;
+                    hiScore = score;
+                }
+                this.scene.start('Win'); 
+            }
+            else{
+                this.on_new_wave();
+            }
         }
     }
 
     player_hit(){
         if(this.hitCooldown <= 0){
             console.log("Collide");
-            score -= 50;
+            score -= 10;
             
             this.score_text.text = "Score: " + score;
             if(this.lives > 1){
@@ -170,6 +137,11 @@ class Game extends Phaser.Scene {
                 this.create_explosion(my.sprite.player);
             }
             else{
+
+        if(score>hiScore){
+            isHiScore = true;
+            hiScore = score;
+        }
                 this.scene.start('Lose'); 
             }
             this.hitCooldown = this.inviciblity;
@@ -337,5 +309,107 @@ class Game extends Phaser.Scene {
         my.sprite.enemies.push(enemy);
         this.enemy_counts[enemy_sprite] += 1;
         return enemy;
+    }
+
+    on_new_wave(){
+        wave++;
+        this.new_wave.text = "Wave " + wave;
+    
+
+        // Enemy spawn
+        // this.create_enemy("enemy_red",0.5, 5000, [
+        //     0-20,0,
+        //     canvas_x/2, canvas_y*0.75,
+        //     0-20, canvas_y
+        // ]);
+        // this.create_enemy("enemy_red",0.5, 5000, [
+        //     canvas_x-20,0,
+        //     canvas_x/2, canvas_y*0.75,
+        //     canvas_x-20, canvas_y
+        // ]);
+        
+        // this.create_enemy("enemy_green",0.5, 50, [
+        //     canvas_x, 200,
+        //     0, 200
+        // ]);
+        // this.create_enemy("enemy_green",0.5, 200, [
+        //     canvas_x, 100,
+        //     0, 100
+        // ]);
+        // this.create_enemy("enemy_green",0.5, 100, [
+        //     canvas_x, 400,
+        //     0, 400
+        // ]);
+
+        // this.create_blue(15,0,3.14/2,0.1, 100, [
+        //     200, -20,
+        //     200, canvas_y
+        // ]);
+        
+        // this.create_blue(-15,0,3.14/2,0.1, 6000, [
+        //     canvas_x-200, -20,
+        //     canvas_x-200, canvas_y
+        // ]);
+        
+        // this.create_enemy("enemy_red",0.5, 100, [
+        //     canvas_x, 400,
+        //     canvas_x/2 - 100, canvas_y/2,
+        //     0, 400
+        // ]);
+
+        let max, min_y, max_y, min_x, max_x;
+        max = wave * 2 + 2; 
+        max_y = canvas_y-50;
+        min_y = 50;
+
+        let delay = 600;
+        let speedmod = 0.8;
+
+        for(let i=0; i<max;i++){
+            let sidex = Math.round(Math.random());
+            max_x = canvas_x * sidex;
+            min_x = canvas_x * (1-sidex);
+            let y = Math.floor(Math.random() * (max_y - min_y) + min_y);
+            this.create_enemy("enemy_green",0.5*speedmod, delay, [
+                max_x, y,
+                min_x, y
+            ]);
+        }
+
+        max = wave * 2;
+        max_y = canvas_y-50;
+        min_y = 50;
+        for(let i=0; i<max;i++){
+            let sidey = Math.round(Math.random());
+            let sidex = Math.round(Math.random());
+            max_y = canvas_y * sidey;
+            min_y = canvas_y * (1-sidey);
+            let offset = (sidex>0.5?1:-1)*200;
+            let y = Math.floor(Math.random() * (max_y - min_y) + min_y);
+            this.create_enemy("enemy_red",0.2*speedmod, delay, [
+            canvas_x * sidex, min_y,
+            canvas_x/2, y,
+            canvas_x * sidex, max_y
+            ]);
+        }
+
+        max = Math.round(Math.ceil(wave)*0.5);
+        for(let i=0; i<max;i++){
+            let sidey = Math.round(Math.random());
+            let sidex = Math.round(Math.random());
+            max_y = canvas_y * sidey;
+            min_y = canvas_y * (1-sidey);
+            let x_pos = 200;
+            let x = sidex > 0.5 ? x_pos : canvas_x - x_pos;
+
+            this.create_blue(15 * (sidex >0.5?1:-1),0,3.14/2,0.08*speedmod, delay+100, [
+                x, min_y,
+                x, max_y
+            ]);
+        }
+
+        this.enemy_counts_text["enemy_green"].text = this.enemy_counts["enemy_green"].toString() + "     left";
+        this.enemy_counts_text["enemy_red"].text = this.enemy_counts["enemy_red"].toString() + "     left";
+        this.enemy_counts_text["enemy_blue"].text = this.enemy_counts["enemy_blue"].toString() + "     left";
     }
 }

@@ -32,5 +32,8 @@ let config = {
 // Global variable to hold sprites
 var my = {sprite: {}};
 var score = 0;
+var hiScore = 0;
+var isHiScore = false;
+var wave = 0;
 
 const game = new Phaser.Game(config);

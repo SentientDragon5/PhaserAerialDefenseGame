@@ -116,6 +116,7 @@ class Game extends Phaser.Scene {
                 if(score>hiScore){
                     isHiScore = true;
                     hiScore = score;
+                    localStorage.setItem('hiScore',hiScore);
                 }
                 this.scene.start('Win'); 
             }
@@ -141,6 +142,7 @@ class Game extends Phaser.Scene {
         if(score>hiScore){
             isHiScore = true;
             hiScore = score;
+            localStorage.setItem('hiScore',hiScore);
         }
                 this.scene.start('Lose'); 
             }
@@ -175,6 +177,11 @@ class Game extends Phaser.Scene {
                             this.check_win();
                         }
                         score += this.enemy_scores[e.sprite_name];
+                        if(score>hiScore){
+                            isHiScore = true;
+                            hiScore = score;
+                            localStorage.setItem('hiScore',hiScore);
+                        }
                         this.score_text.text = "Score: " + score;
                         this.create_explosion(e);
                         e.visible = false;

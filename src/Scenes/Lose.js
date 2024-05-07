@@ -16,6 +16,7 @@ class Lose extends Phaser.Scene {
         var style = { font: "32px Verdana", fill: "#ffffff", align: "center" };
         var mainLabel = this.add.text(canvas_x/2 - 110, canvas_y/2, "You Lose...", style);
 
+        hiScore = parseInt(localStorage.getItem('hiScore')) || 0;
         style = { font: "24px Verdana", fill: "#ffffff", align: "center" };
         var score_text = this.add.text(canvas_x/2 - 110, canvas_y/2 + 50, "Score: " + score, style);
         var high_score_text = this.add.text(canvas_x/2 - 110, canvas_y/2 + 80, "High Score: " + hiScore + (isHiScore?"(New!)":""), style);

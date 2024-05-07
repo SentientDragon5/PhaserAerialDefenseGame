@@ -129,7 +129,6 @@ class Game extends Phaser.Scene {
     player_hit(){
         if(this.hitCooldown <= 0){
             console.log("Collide");
-            score -= 10;
             
             this.score_text.text = "Score: " + score;
             if(this.lives > 1){
